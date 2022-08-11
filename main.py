@@ -3,11 +3,12 @@ import csv
 api = OssapiV2(client_id=17213, client_secret="1AQk3DqbmdQTRmxQFkk38IwqwwjMM2jLM6bKI3N3")
 
 response = api.ranking("osu", RankingType.PERFORMANCE)
-header = ['Global Rank', 'Username', 'Total_pp', 'Best_pp', "Beatmap", 'Mods', 'Beatmap_id']
-with open('osudata.csv', 'a') as f:
+bmap = api.beatmap(869019)
+header = ['pp', 'difficulty']
+with open('difficulty.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(header)
-    for i in range(47, 201):
+    for i in range(1, 201):
         cursor = Cursor(page=i)
         response = api.ranking("osu", RankingType.PERFORMANCE, cursor=cursor)
         for ranking in response.ranking:
@@ -17,12 +18,9 @@ with open('osudata.csv', 'a') as f:
             top_plays = []
             try:
                 for score in api.user_scores(ranking.user.id, "best"):
-                    top_plays.append([score.beatmapset.title, score.beatmapset.id, score.beatmap.url, score.mods, score.pp, score.rank, score.accuracy*100])
+                    print(score.beatmap.difficulty_rating)
             except ValueError:
                 continue
-
-            print(data)
-            print(top_plays)
             writer.writerows(top_plays)
 
 
