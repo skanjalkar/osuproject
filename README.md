@@ -17,7 +17,7 @@ The second most popular map was Bass Slut, questionable name. The spread for thi
 The rest of the figures are shown for the top 15 most played maps amongst the top 10000 players. The general format is similar to what is explained before.
 
 <p align="center">
-    <img width="100" height="100" src="https://github.com/zen1405/osuproject/blob/main/Images/3%20Save%20me.png">
+    <img width="500" height="500" src="https://github.com/zen1405/osuproject/blob/main/Images/3%20Save%20me.png">
 </p>
 ![4. Horrible Kids](https://github.com/zen1405/osuproject/blob/main/Images/4%20Horrible%20Kids.png)
 ![5. Sidetracked Day](https://github.com/zen1405/osuproject/blob/main/Images/5%20Sidetracked%20Day.png)
