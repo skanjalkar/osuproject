@@ -1,73 +1,106 @@
+from tkinter import font
 import matplotlib.pyplot as plt
 import csv
-file = open("osudata.csv")
-csvreader = csv.reader(file)
-header = []
-header = next(csvreader)
-user_info = []
+import numpy as np
 
-class osuInfo():
-    def __init__(self, rank, username, pp):
-        self.rank = rank
-        self.username = username
-        self.pp = pp
-        self.map = {}
-        self.info = {}
+class Player():
+    def __init__(self) -> None:
+        self.username = ""
+        self.rank = 0
+        self.total_pp = 0.0
+        self.scores = [] # list of scores
 
+class Score():
+    def __init__(self) -> None:
+        self.map_name = ""
+        self.map_id = 0
+        self.map_url = ""
+        self.mods = ""
+        self.pp = 0.0
+        self.grade = ""
+        self.accuracy = 0.0
 
-for row in csvreader:
-    if not row:
-        continue
-    if len(row)<=3:
-        osuobj = osuInfo(row[0], row[1], row[2])
-        user_info.append(osuobj)
-    if len(row)>3:
-        for g in range(len(row[5])):
-            if row[5][g] == ".":
-                grade = row[5][g+1]
-                break
+def parse(file_name):
+    user_info = []
+    file = open(file_name)
+    csv_reader = csv.reader(file)
+    row = next(csv_reader)
+    row = next(csv_reader)
+    row = next(csv_reader)
+    while row is not None:
+        # Parse player info
+        p = Player()
+        p.rank, p.username, p.total_pp = int(row[0]), row[1], float(row[2])
+        row = next(csv_reader)
+        row = next(csv_reader)
+        while row is not None and len(row) != 3:
+            s = Score()
+            s.map_name = row[0]
+            s.map_id = int(row[1])
+            s.map_url = row[2]
+            s.mods = row[3]
+            s.pp = float(row[4])
+            s.grade = row[5][6]
+            s.accuracy = round(float(row[6]),2)
+            p.scores.append(s)
+            try:            
+                row = next(csv_reader)
+                row = next(csv_reader)
+            except StopIteration:
+                row = None                
+        user_info.append(p)
+    return user_info
 
-        user_info[-1].info[(row[0], row[3])]=[float(row[4]), grade, row[6]]
+data = parse("osudata.csv")
 
-file.seek(0)        
-header = []
-header = next(csvreader)
+# function which returns a dict.
 
-def frequency():
+#############################
+
+def frequency(data):
     map_freq = {}
-    for row in csvreader:
-        if not row:
-            continue
-        if len(row)>3:
-            if (row[0], row[3]) not in map_freq:
-                map_freq[(row[0], row[3])] = 1
+    for users in data:
+        for score in users.scores:
+            if (score.map_name, score.map_id) not in map_freq:
+                map_freq[(score.map_name, score.map_id)] = 1
             else:
-                map_freq[(row[0], row[3])] += 1
+                map_freq[(score.map_name, score.map_id)] += 1
+        
     return map_freq
 
-def map_info(map, user_info):
-    x = []
-    y = []
-    z = []
-    for user in user_info:
-        if map in user.info:
-            x.append(user.info[map][0])
-            y.append(round(float(user.info[map][2]),2))
-            z.append(user.info[map][1])
-    return x, y, z
-
-
-map_freq = frequency()
+map_freq = frequency(data)
 map_freq = dict(sorted(map_freq.items(), key=lambda item: item[1], reverse=True))
-# print(map_freq)
 
-for map in map_freq:
-    x, y, z = map_info(map, user_info)
-    # print(y)
-    plt.title(map)
-    plt.scatter(x, y)
-    plt.xlabel("PP")
-    plt.ylabel("Accuracy")
-    plt.show()
+def map_mod_scores(map_id, data):
+    mod_score = {}
+    for users in data:
+        for score in users.scores:
+            if score.map_id == map_id:
+                if score.mods not in mod_score:
+                    mod_score[score.mods] = [(score.pp, score.accuracy)]
+                else:
+                    mod_score[score.mods].append((score.pp, score.accuracy))
+    return mod_score
 
+
+def plot_graph(map_freq, data):
+    for mapname, mapid in map_freq:
+        mapscores = map_mod_scores(mapid, data)
+        legends = []
+        for key in mapscores:
+            tx = []
+            ty = []
+            for i, j in mapscores[key]:
+                tx.append(i)
+                ty.append(j)
+            plt.scatter(tx, ty, color=np.random.rand(3,))
+            legends.append(key)
+        # plt.figure(count)
+        plt.title(mapname + f'({mapid})' + " || Frequency: " + str(map_freq[(mapname, mapid)]))
+        plt.legend(legends, loc="lower right", prop={'size': 6})
+        plt.xlabel("PP")
+        plt.ylabel("Accuracy")
+        plt.show()
+
+plot_graph(map_freq, data)
 
