@@ -9,6 +9,8 @@ Spun Out. However, almost all of the players data is stored in the osudata.csv
 The most popular map for the top 10000 globally ranked player is Zan'ei, being in the top 5 for them with a frequency of 1227. The distribution of the mods shows  that only 6 players are able to play the map with Double Time mod. Rest of the players either playing with Hard Rock or No-Mod. Subsequently the performance points rewarded with accuracy between 97-100 is between 400-600, whereas the DoubleTime mod with without full combo provides around 1000 performance points, 
 with 2 players getting 1157 and 1240 pp. 
 
+Note that if you go to a map and check the top plays of a map, it need not correspond to the spread because the top 5 plays of a player need not be that map. For example, Player Umbre has the best score on the map Sidetracked day, however, it is not in his top 5 plays. Hence, that won't be shown in the cluster graph. If we plot specifically for a map then we can get the appropriate cluster. Maybe a future work.
+
 1. [Zan'ei](https://osu.ppy.sh/beatmaps/3601629)
 
 <p align="center">
