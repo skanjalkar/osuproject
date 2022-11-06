@@ -61,10 +61,10 @@ def frequency(data):
     map_freq = {}
     for users in data:
         for score in users.scores:
-            if (score.map_name, score.map_id) not in map_freq:
-                map_freq[(score.map_name, score.map_id)] = 1
+            if (score.map_name, score.map_id, score.map_url) not in map_freq:
+                map_freq[(score.map_name, score.map_id, score.map_url)] = 1
             else:
-                map_freq[(score.map_name, score.map_id)] += 1
+                map_freq[(score.map_name, score.map_id, score.map_url)] += 1
         
     return map_freq
 
@@ -84,7 +84,7 @@ def map_mod_scores(map_id, data):
 
 
 def plot_graph(map_freq, data):
-    for mapname, mapid in map_freq:
+    for mapname, mapid, map_url in map_freq:
         mapscores = map_mod_scores(mapid, data)
         legends = []
         for key in mapscores:
@@ -96,7 +96,8 @@ def plot_graph(map_freq, data):
             plt.scatter(tx, ty, color=np.random.rand(3,))
             legends.append(key)
         # plt.figure(count)
-        plt.title(mapname + f'({mapid})' + " || Frequency: " + str(map_freq[(mapname, mapid)]))
+        print(map_url)
+        plt.title(mapname + f'({mapid})' + " || Frequency: " + str(map_freq[(mapname, mapid, map_url)]))
         plt.legend(legends, loc="lower right", prop={'size': 6})
         plt.xlabel("PP")
         plt.ylabel("Accuracy")
